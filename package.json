@@ -1,0 +1,25 @@
+{
+  "name": "cav",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc -w",
+    "test": "jest",
+    "cdk": "cdk"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@types/jest": "^24.9.1",
+    "@types/node": "^10.17.5",
+    "fastify": "^2.12.0",
+    "fastify-plugin": "^1.6.1",
+    "jest": "^24.9.0",
+    "lodash": "^4.17.15",
+    "ts-jest": "^24.3.0",
+    "ts-node": "^8.6.2",
+    "typescript": "^3.7.5"
+  }
+}
