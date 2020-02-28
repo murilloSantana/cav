@@ -1,14 +1,17 @@
 import Repository from "./repository";
+import {FastifyReply, FastifyRequest} from "fastify";
+import * as http from "http";
 
-
-export default class Controller {
+class Controller {
     private repository: Repository;
 
-    constructor(repository: Repository) {
-        this.repository = repository;
+    constructor() {
+        this.repository = new Repository();
     }
 
-    findAll() {
-        return this.repository.findAll();
+    findAll = async (request: FastifyRequest, reply: FastifyReply<http.ServerResponse>) => {
+        reply.send(this.repository.findAll());
     }
 }
+
+export default new Controller();

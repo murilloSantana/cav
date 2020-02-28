@@ -9,7 +9,7 @@ export default class Repository {
         this.data = DB;
     }
 
-    findAll(): Cav {
+    findAll(): Array<Cav> {
         return this.data;
     }
 }
