@@ -21,7 +21,7 @@ export default class Repository {
         return this.data;
     }
 
-    findAvailableTimes(cavName: string): Array<any> {
+    findAvailableTimes(cavName: string, proceeding: string): Array<any> {
         const schedules: Array<any> = [];
 
         _.toPairs(this.agenda).forEach((item: any) => {
@@ -29,17 +29,27 @@ export default class Repository {
             const cavsMap = item[1];
             const findedCav = cavsMap.cav[cavName];
 
-            schedules.push(this.buildSchedule(date, findedCav));
+            schedules.push(this.buildSchedule(date, findedCav, proceeding));
         });
 
         return schedules;
     }
 
-    buildSchedule(date: string, cav: any) {
-        const schedule = {date: date, visits: [], inspections: []};
+    buildSchedule(date: string, cav: any, proceeding: string) {
+        const schedule: any = {date: date};
 
-        schedule.visits = this.findAvailableVisitSchedules(cav.visit);
-        schedule.inspections = this.findAvailableInspectionSchedules(cav.inspection);
+        switch (proceeding) {
+            case 'visit':
+                schedule.visits = this.findAvailableVisitSchedules(cav.visit);
+                break;
+            case 'inspection':
+                schedule.inspections = this.findAvailableInspectionSchedules(cav.inspection);
+                break;
+            default:
+                schedule.visits = this.findAvailableVisitSchedules(cav.visit);
+                schedule.inspections = this.findAvailableInspectionSchedules(cav.inspection);
+        }
+
 
         return schedule;
     }

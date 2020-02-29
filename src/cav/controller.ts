@@ -17,8 +17,7 @@ class Controller {
         const findedCav = this.repository.findById(request.params.cavId);
         if(!findedCav) reply.callNotFound();
 
-        const schedules = this.repository.findAvailableTimes(findedCav.name);
-        reply.send(schedules);
+        reply.send(this.repository.findAvailableTimes(findedCav.name, request.query.proceeding));
     }
 }
 

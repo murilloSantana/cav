@@ -16,10 +16,18 @@ export default fp(async (server, opts, next) => {
         logLevel: "error",
         prefixTrailingSlash: "both",
         preHandler: async (request: FastifyRequest, reply: FastifyReply<http.ServerResponse>) => {
+            const proceedingsSupporteds = ["visit", "inspection"];
+
             if(!request.params.cavId) {
                 reply.status(400);
                 reply.send("CavId is required");
             }
+
+            if(request.query.proceeding && !proceedingsSupporteds.includes(request.query.proceeding)) {
+                reply.status(400);
+                reply.send(`The informed procedure is not supported, only the following procedures are valid: ${proceedingsSupporteds}`);
+            }
+
         },
         handler: controller.findAvailableCavsById
     });
