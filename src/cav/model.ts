@@ -1,9 +1,10 @@
 export default class Cav {
-    private id: number;
-    private name: string;
+    readonly id: number;
+    readonly name: string;
 
     constructor(id: number, name: string) {
         this.id = id;
         this.name = name;
     }
+
 }
