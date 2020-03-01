@@ -21,15 +21,30 @@ export default fp(async (server, opts, next) => {
             if(!request.params.cavId) {
                 reply.status(400);
                 reply.send("CavId is required");
-            }
+            };
 
             if(request.query.proceeding && !proceedingsSupporteds.includes(request.query.proceeding)) {
                 reply.status(400);
                 reply.send(`The informed procedure is not supported, only the following procedures are valid: ${proceedingsSupporteds}`);
-            }
+            };
 
         },
-        handler: CavController.findAvailableCavsById
+        handler: CavController.findAvailableCavTimesById
+    }).route({
+        url: "/cav/:cavId/inspection",
+        method: ["POST"],
+        logLevel: "error",
+        prefixTrailingSlash: "both",
+        preHandler: async (request: FastifyRequest, reply: FastifyReply<http.ServerResponse>) => {
+
+            if(!request.params.cavId) {
+                reply.status(400);
+                reply.send("CavId is required");
+            };
+
+        },
+        handler: CavController.scheduleInspection
     });
+
     next();
 });
