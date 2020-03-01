@@ -15,13 +15,13 @@ export default fp(async (server, opts, next) => {
         method: ["GET"],
         logLevel: "error",
         prefixTrailingSlash: "both",
+        schema: {
+            params: {
+                cavId: { type: 'number' }
+            }
+        },
         preHandler: async (request: FastifyRequest, reply: FastifyReply<http.ServerResponse>) => {
             const proceedingsSupporteds = ["visit", "inspection"];
-
-            if(!request.params.cavId) {
-                reply.status(400);
-                reply.send("CavId is required");
-            };
 
             if(request.query.proceeding && !proceedingsSupporteds.includes(request.query.proceeding)) {
                 reply.status(400);
@@ -35,13 +35,15 @@ export default fp(async (server, opts, next) => {
         method: ["POST"],
         logLevel: "error",
         prefixTrailingSlash: "both",
-        preHandler: async (request: FastifyRequest, reply: FastifyReply<http.ServerResponse>) => {
-
-            if(!request.params.cavId) {
-                reply.status(400);
-                reply.send("CavId is required");
-            };
-
+        schema: {
+            body: {
+                type: 'object',
+                properties: {
+                    date: { type: 'string' },
+                    time: { type: 'string' }
+                },
+                required: ['date', 'time']
+            }
         },
         handler: CavController.scheduleInspection
     }).route({
@@ -49,6 +51,19 @@ export default fp(async (server, opts, next) => {
         method: ["POST"],
         logLevel: "error",
         prefixTrailingSlash: "both",
+        schema: {
+            params: {
+                cavId: { type: 'number' }
+            },
+            body: {
+                type: 'object',
+                properties: {
+                    date: { type: 'string' },
+                    time: { type: 'string' }
+                },
+                required: [ 'date', 'time' ]
+            }
+        },
         preHandler: async (request: FastifyRequest, reply: FastifyReply<http.ServerResponse>) => {
 
             if(!request.params.cavId) {

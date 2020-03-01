@@ -24,29 +24,11 @@ class CavController {
         reply.send(this.scheduleRepository.findAvailableTimes(findedCav.name, request.query.proceeding));
     };
 
-    // TODO (a lib do fastify ja tem essas funcionalidades)criar util para tratar de maneira menos repetitiva as respostas de erro http
     scheduleInspection = async (request: FastifyRequest, reply: FastifyReply<http.ServerResponse>) => {
         const findedCav = this.cavRepository.findById(request.params.cavId);
         if(!findedCav) reply.callNotFound();
-        if(!request.body) {
-            reply.status(400);
-            reply.send("body is required");
-            return;
-        }
 
         const { date, time } = request.body;
-
-        if(!date) {
-            reply.status(400);
-            reply.send("date is required");
-            return;
-        }
-
-        if(!time) {
-            reply.status(400);
-            reply.send("time is required");
-            return;
-        }
 
         this.scheduleRepository.scheduleProceeding(findedCav.name, date, time, 'inspection');
 
@@ -54,29 +36,11 @@ class CavController {
         reply.send("created");
     };
 
-    // TODO (a lib do fastify ja tem essas funcionalidades)criar util para tratar de maneira menos repetitiva as respostas de erro http
     scheduleVisit = async (request: FastifyRequest, reply: FastifyReply<http.ServerResponse>) => {
         const findedCav = this.cavRepository.findById(request.params.cavId);
         if(!findedCav) reply.callNotFound();
-        if(!request.body) {
-            reply.status(400);
-            reply.send("body is required");
-            return;
-        }
 
         const { date, time } = request.body;
-
-        if(!date) {
-            reply.status(400);
-            reply.send("date is required");
-            return;
-        }
-
-        if(!time) {
-            reply.status(400);
-            reply.send("time is required");
-            return;
-        }
 
         this.scheduleRepository.scheduleProceeding(findedCav.name, date, time, 'visit');
 
