@@ -24,10 +24,7 @@ export default class ScheduleRepository {
         const findedCavSchedule: any = this.findCav(findedDate, cavName);
         if(!findedCavSchedule) throw new Error("cav isn't valid");
 
-        const newProceeding = this.putProceeding(findedCavSchedule[proceeding], cavName, time);
-        if(_.isEqual(newProceeding, findedCavSchedule[proceeding])) throw new Error("time isn't valid");
-
-        findedCavSchedule[proceeding] = newProceeding;
+        findedCavSchedule[proceeding] = this.generateProceeding(findedCavSchedule[proceeding], cavName, time);
 
         fs.writeFileSync("../db/calendar.json", JSON.stringify(this.parseScheduleToJson(this.schedule)));
     };
@@ -42,8 +39,8 @@ export default class ScheduleRepository {
         return findedCav;
     };
 
-    putProceeding = (proceeding: any, cavName: string, time: string) => {
-        return _.mapValues(proceeding, (value: any, key: any) => {
+    generateProceeding = (proceeding: any, cavName: string, time: string) => {
+        const newProceeding = _.mapValues(proceeding, (value: any, key: any) => {
             if(key == time) {
                 if(!_.isEmpty(value)) throw new Error("time has already been reserved by someone else");
 
@@ -51,6 +48,10 @@ export default class ScheduleRepository {
             }
             return value;
         });
+
+        if(_.isEqual(newProceeding, proceeding)) throw new Error("time isn't valid");
+
+        return newProceeding;
     };
 
     findAvailableTimes = (cavName: string, proceeding: string): Array<any>  => {
