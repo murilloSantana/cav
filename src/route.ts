@@ -1,5 +1,5 @@
 import * as fp from "fastify-plugin";
-import controller from "./controller";
+import CavController from "./controller/cavController";
 import {FastifyReply, FastifyRequest} from "fastify";
 import * as http from "http";
 
@@ -9,7 +9,7 @@ export default fp(async (server, opts, next) => {
         method: ["GET"],
         logLevel: "error",
         prefixTrailingSlash: "both",
-        handler: controller.findAll
+        handler: CavController.findAll
     }).route({
         url: "/cav/:cavId",
         method: ["GET"],
@@ -29,7 +29,7 @@ export default fp(async (server, opts, next) => {
             }
 
         },
-        handler: controller.findAvailableCavsById
+        handler: CavController.findAvailableCavsById
     });
     next();
 });

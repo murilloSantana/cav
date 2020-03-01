@@ -1,6 +1,6 @@
 import * as fastify from "fastify";
 import { Server, IncomingMessage, ServerResponse } from "http";
-import cavRoutes from "./cav/route";
+import cavRoutes from "./route";
 
 const server: fastify.FastifyInstance<
     Server,
