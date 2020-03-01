@@ -44,6 +44,20 @@ export default fp(async (server, opts, next) => {
 
         },
         handler: CavController.scheduleInspection
+    }).route({
+        url: "/cav/:cavId/visit",
+        method: ["POST"],
+        logLevel: "error",
+        prefixTrailingSlash: "both",
+        preHandler: async (request: FastifyRequest, reply: FastifyReply<http.ServerResponse>) => {
+
+            if(!request.params.cavId) {
+                reply.status(400);
+                reply.send("CavId is required");
+            };
+
+        },
+        handler: CavController.scheduleVisit
     });
 
     next();

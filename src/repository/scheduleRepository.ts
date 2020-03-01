@@ -15,7 +15,7 @@ export default class ScheduleRepository {
         this.carRepository = new CarRepository();
     }
 
-    scheduleInspection = (cavName: string, requestDate: string, time: string, proceeding: string) => {
+    scheduleProceeding = (cavName: string, requestDate: string, time: string, proceeding: string) => {
         this.schedule = this.parseJsonToSchedule();
 
         const findedDate = this.findDateSchedule(requestDate);
