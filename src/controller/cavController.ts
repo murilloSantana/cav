@@ -4,7 +4,7 @@ import * as http from "http";
 
 class CavController {
 
-    private cavRepository: CavRepository;
+    cavRepository: CavRepository;
 
     constructor() {
         this.cavRepository = new CavRepository();

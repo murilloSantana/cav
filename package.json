@@ -3,6 +3,12 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "author": "murillo.costa.ferreira@gmail.com",
+  "homepage": "https://github.com/murilloSantana/cav/blob/master/README.md",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:murilloSantana/cav.git"
+  },
   "scripts": {
     "build": "tsc",
     "watch": "tsc -w",

@@ -6,8 +6,8 @@ import CavRepository from "../repository/cavRepository";
 
 class ScheduleController {
 
-    private cavRepository: CavRepository;
-    private scheduleRepository: ScheduleRepository;
+    cavRepository: CavRepository;
+    scheduleRepository: ScheduleRepository;
 
     constructor() {
         this.cavRepository = new CavRepository();
@@ -16,14 +16,21 @@ class ScheduleController {
 
     findAvailableCavTimesById = async (request: FastifyRequest, reply: FastifyReply<http.ServerResponse>) => {
         const findedCav = this.cavRepository.findById(request.params.cavId);
-        if(!findedCav) reply.callNotFound();
+        if(!findedCav) {
+            reply.callNotFound();
+            return;
+        }
 
         reply.send(this.scheduleRepository.findAvailableTimes(findedCav.name, request.query.proceeding));
     };
 
     scheduleInspection = async (request: FastifyRequest, reply: FastifyReply<http.ServerResponse>) => {
         const findedCav = this.cavRepository.findById(request.params.cavId);
-        if(!findedCav) reply.callNotFound();
+        if(!findedCav) {
+            reply.status(400);
+            reply.send("cav not found");
+            return;
+        }
 
         const { date, time } = request.body;
 
@@ -35,7 +42,11 @@ class ScheduleController {
 
     scheduleVisit = async (request: FastifyRequest, reply: FastifyReply<http.ServerResponse>) => {
         const findedCav = this.cavRepository.findById(request.params.cavId);
-        if(!findedCav) reply.callNotFound();
+        if(!findedCav) {
+            reply.status(400);
+            reply.send("cav not found");
+            return;
+        }
 
         const { date, time } = request.body;
 

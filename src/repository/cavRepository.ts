@@ -5,7 +5,7 @@ const _ = require('lodash');
 
 export default class CavRepository {
 
-    findById(cavId: number): Cav {
+    findById(cavId: number): Cav | undefined {
         const cavJson = JSON.parse(fs.readFileSync('../db/cav.json', 'utf8'));
         return _.find(cavJson, (cav: Cav) => cav.id == cavId);
     }
