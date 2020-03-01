@@ -48,16 +48,10 @@ class CavController {
             return;
         }
 
-        const findedTime = this.scheduleRepository.scheduleInspection(findedCav.name, date, time);
+        this.scheduleRepository.scheduleInspection(findedCav.name, date, time, 'inspection');
 
-        if(findedTime == null) {
-            reply.status(400);
-            reply.send("date or cav or time isn't valid");
-            return;
-        }
-
-        reply.send("ok");
-
+        reply.status(201);
+        reply.send("created");
     };
 }
 

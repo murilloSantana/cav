@@ -9,26 +9,41 @@ const _ = require('lodash');
 export default class ScheduleRepository {
 
     private carRepository: CarRepository;
+    private schedule: Schedule;
 
     constructor() {
         this.carRepository = new CarRepository();
     }
 
-    //TODO refatorar metodo
-    scheduleInspection = (cavName: string, requestDate: string, time: string) => {
-        const schedule = this.parseJsonToSchedule();
+    scheduleInspection = (cavName: string, requestDate: string, time: string, proceeding: string) => {
+        this.schedule = this.parseJsonToSchedule();
 
-        const date: DateSchedule = _.find(schedule.dates, (date: DateSchedule) => date.value == requestDate);
+        const findedDate = this.findDateSchedule(requestDate);
+        if(!findedDate) throw new Error("date isn't valid");
 
-        //TODO lançar erro
-        if(!date || !date.cavs) return null;
+        const findedCavSchedule: any = this.findCav(findedDate, cavName);
+        if(!findedCavSchedule) throw new Error("cav isn't valid");
 
+        const newProceeding = this.putProceeding(findedCavSchedule[proceeding], cavName, time);
+        if(_.isEqual(newProceeding, findedCavSchedule[proceeding])) throw new Error("time isn't valid");
+
+        findedCavSchedule[proceeding] = newProceeding;
+
+        fs.writeFileSync("../db/calendar.json", JSON.stringify(this.parseScheduleToJson(this.schedule)));
+    };
+
+    findDateSchedule = (requestDate: string): DateSchedule => {
+        const date: DateSchedule = _.find(this.schedule.dates, (date: DateSchedule) => date.value == requestDate);
+        return date;
+    };
+
+    findCav = (date: DateSchedule, cavName: string): Cav => {
         const findedCav: Cav = _.find(date.cavs, (cav: Cav) => cav.name == cavName);
+        return findedCav;
+    };
 
-        //TODO lançar erro
-        if(!findedCav) return null;
-
-        findedCav.inspection = _.mapValues(findedCav.inspection, (value: any, key: any) => {
+    putProceeding = (proceeding: any, cavName: string, time: string) => {
+        return _.mapValues(proceeding, (value: any, key: any) => {
             if(key == time) {
                 if(!_.isEmpty(value)) throw new Error("time has already been reserved by someone else");
 
@@ -36,15 +51,12 @@ export default class ScheduleRepository {
             }
             return value;
         });
-
-        fs.writeFileSync("../db/calendar.json", JSON.stringify(this.parseScheduleToJson(schedule)));
-
     };
 
     findAvailableTimes = (cavName: string, proceeding: string): Array<any>  => {
-        const schedule = this.parseJsonToSchedule();
+        this.schedule = this.parseJsonToSchedule();
 
-        return _.map(schedule.dates, (date: DateSchedule) => {
+        return _.map(this.schedule.dates, (date: DateSchedule) => {
             const availableTimes = this.findCavScheduleByName(date.cavs, cavName);
 
             switch (proceeding) {
@@ -61,10 +73,6 @@ export default class ScheduleRepository {
 
     findCavScheduleByName = (cavs: Cav[], cavName: string): Cav => {
         return _.find(cavs, (cav: Cav) => cav.name == cavName);
-    };
-
-    saveScheduleJson = () => {
-
     };
 
     private parseJsonToSchedule = () => {
