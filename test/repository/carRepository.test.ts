@@ -10,7 +10,7 @@ describe('CarRepository', () => {
         jest.clearAllMocks();
     });
 
-    test('Should findByCavName return undefined because car not exist', async () => {
+    test('Should findById return undefined because car not exist', async () => {
         const carId: number = 100;
 
         carRepository.buildDB = jest.fn().mockImplementation(() => {
@@ -23,7 +23,7 @@ describe('CarRepository', () => {
 
     });
 
-    test('Should findByCavName', async () => {
+    test('Should findById', async () => {
         const carId: number = 1;
         const expectedCar = {
             "id": 1,

@@ -6,12 +6,15 @@ const _ = require('lodash');
 export default class CavRepository {
 
     findById(cavId: number): Cav | undefined {
-        const cavJson = JSON.parse(fs.readFileSync('../db/cav.json', 'utf8'));
+        const cavJson = this.buildDB();
         return _.find(cavJson, (cav: Cav) => cav.id == cavId);
     }
 
     findAll(): Array<Cav> {
-        return JSON.parse(fs.readFileSync('../db/cav.json', 'utf8'));
+        return this.buildDB();
     }
 
+    buildDB = () => {
+        return JSON.parse(fs.readFileSync('../db/cav.json', 'utf8'));
+    }
 }
