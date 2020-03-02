@@ -108,6 +108,7 @@ describe('ScheduleController', () => {
         const request = fastifyMock.mockDefaultRequest();
         request.body.date = "2019-07-17";
         request.body.time = "12";
+        request.body.carId = 1;
 
         const reply = fastifyMock.mockDefaultReply();
 
@@ -127,7 +128,7 @@ describe('ScheduleController', () => {
         await scheduleController.scheduleInspection(request, reply);
 
         expect(ScheduleController.scheduleRepository.scheduleProceeding).toBeCalledTimes(1);
-        expect(ScheduleController.scheduleRepository.scheduleProceeding).toBeCalledWith("Botafogo", "2019-07-17", "12", "inspection");
+        expect(ScheduleController.scheduleRepository.scheduleProceeding).toBeCalledWith("Botafogo", "2019-07-17", "12", 1, "inspection");
         expect(reply.status).toBeCalledTimes(1);
         expect(reply.status).toBeCalledWith(201);
         expect(reply.send).toBeCalledTimes(1);
@@ -154,6 +155,7 @@ describe('ScheduleController', () => {
         const request = fastifyMock.mockDefaultRequest();
         request.body.date = "2019-07-21";
         request.body.time = "11";
+        request.body.carId = 1;
 
         const reply = fastifyMock.mockDefaultReply();
 
@@ -173,7 +175,7 @@ describe('ScheduleController', () => {
         await scheduleController.scheduleVisit(request, reply);
 
         expect(ScheduleController.scheduleRepository.scheduleProceeding).toBeCalledTimes(1);
-        expect(ScheduleController.scheduleRepository.scheduleProceeding).toBeCalledWith("Flamengo", "2019-07-21", "11", "visit");
+        expect(ScheduleController.scheduleRepository.scheduleProceeding).toBeCalledWith("Flamengo", "2019-07-21", "11", 1,"visit");
         expect(reply.status).toBeCalledTimes(1);
         expect(reply.status).toBeCalledWith(201);
         expect(reply.send).toBeCalledTimes(1);

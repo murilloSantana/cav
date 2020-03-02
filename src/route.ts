@@ -41,9 +41,10 @@ export default fp(async (server, opts, next) => {
                 type: 'object',
                 properties: {
                     date: { type: 'string' },
-                    time: { type: 'string' }
+                    time: { type: 'string' },
+                    carId: { type: 'number' }
                 },
-                required: ['date', 'time']
+                required: [ 'date', 'time', 'carId' ]
             }
         },
         handler: ScheduleController.scheduleInspection
@@ -60,9 +61,10 @@ export default fp(async (server, opts, next) => {
                 type: 'object',
                 properties: {
                     date: { type: 'string' },
-                    time: { type: 'string' }
+                    time: { type: 'string' },
+                    carId: { type: 'number' }
                 },
-                required: [ 'date', 'time' ]
+                required: [ 'date', 'time', 'carId' ]
             }
         },
         handler: ScheduleController.scheduleVisit

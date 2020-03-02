@@ -15,7 +15,8 @@ export default class ScheduleRepository {
         this.carRepository = new CarRepository();
     }
 
-    scheduleProceeding = (cavName: string, requestDate: string, time: string, proceeding: string) => {
+    // TODO diminuir a quantidade de params passados
+    scheduleProceeding = (cavName: string, requestDate: string, time: string, carId: number, proceeding: string) => {
         this.schedule = this.parseJsonToSchedule();
 
         const findedDate = this.findDateSchedule(requestDate);
@@ -24,7 +25,7 @@ export default class ScheduleRepository {
         const findedCavSchedule: any = this.findCav(findedDate, cavName);
         if(!findedCavSchedule) throw new Error("cav isn't valid");
 
-        findedCavSchedule[proceeding] = this.generateProceeding(findedCavSchedule[proceeding], cavName, time);
+        findedCavSchedule[proceeding] = this.generateProceeding(findedCavSchedule[proceeding], cavName, carId, time);
 
         fs.writeFileSync("../db/calendar.json", JSON.stringify(this.parseScheduleToJson(this.schedule)));
     };
@@ -39,12 +40,15 @@ export default class ScheduleRepository {
         return findedCav;
     };
 
-    generateProceeding = (proceeding: any, cavName: string, time: string) => {
+    generateProceeding = (proceeding: any, cavName: string, carId: number, time: string) => {
         const newProceeding = _.mapValues(proceeding, (value: any, key: any) => {
             if(key == time) {
                 if(!_.isEmpty(value)) throw new Error("time has already been reserved by someone else");
 
-                return { car: this.carRepository.findByCavName(cavName).id };
+                const car = this.carRepository.findById(carId);
+                if(!car) throw new Error("car not exist");
+
+                return { car: car.id };
             }
             return value;
         });

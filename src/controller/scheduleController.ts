@@ -32,9 +32,9 @@ class ScheduleController {
             return;
         }
 
-        const { date, time } = request.body;
+        const { date, time, carId } = request.body;
 
-        this.scheduleRepository.scheduleProceeding(findedCav.name, date, time, 'inspection');
+        this.scheduleRepository.scheduleProceeding(findedCav.name, date, time, carId, 'inspection');
 
         reply.status(201);
         reply.send("created");
@@ -48,9 +48,9 @@ class ScheduleController {
             return;
         }
 
-        const { date, time } = request.body;
+        const { date, time, carId } = request.body;
 
-        this.scheduleRepository.scheduleProceeding(findedCav.name, date, time, 'visit');
+        this.scheduleRepository.scheduleProceeding(findedCav.name, date, time, carId, 'visit');
 
         reply.status(201);
         reply.send("created");
