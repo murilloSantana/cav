@@ -139,6 +139,45 @@ describe('CarRepository', () => {
         expect(response).toEqual(expectedCav);
     });
 
+    test('Should findAvailableVisitSchedules', async () => {
+
+        scheduleRepository.buildDB = jest.fn().mockImplementation(() => {
+            return JSON.parse(fs.readFileSync('./test/mock/db/calendar.json', 'utf8'));
+        });
+
+        scheduleRepository.parseJsonToSchedule();
+        const response = scheduleRepository.findAvailableVisitSchedules(mockSchedule.botafogoCavObject().visit);
+
+        expect(response).toEqual([
+            "10",
+            "12",
+            "13",
+            "15",
+            "16",
+            "17"
+        ]);
+    });
+
+    test('Should findAvailableInspectionSchedules', async () => {
+
+        scheduleRepository.buildDB = jest.fn().mockImplementation(() => {
+            return JSON.parse(fs.readFileSync('./test/mock/db/calendar.json', 'utf8'));
+        });
+
+        scheduleRepository.parseJsonToSchedule();
+        const response = scheduleRepository.findAvailableInspectionSchedules(mockSchedule.botafogoCavObject().inspection);
+
+        expect(response).toEqual([
+            "10",
+            "12",
+            "13",
+            "14",
+            "15",
+            "16",
+            "17"
+        ]);
+    });
+
     test('Should findCavScheduleByName return undefined because cav not exist', async () => {
         const cavName = 'Flamengo';
         const cavs: Cav[] = [
@@ -162,54 +201,45 @@ describe('CarRepository', () => {
         const proceeding = "";
         const expectedTimes = [{
             "date": "2019-07-17",
-            "visit": {
-                "10": {},
-                "11": {
-                    "car": 1
-                },
-                "12": {},
-                "13": {},
-                "14": {
-                    "car": 7
-                },
-                "15": {},
-                "16": {},
-                "17": {}
-            },
-            "inspection": {
-                "10": {},
-                "11": {
-                    "car": 7
-                },
-                "12": {},
-                "13": {},
-                "14": {},
-                "15": {},
-                "16": {},
-                "17": {}
-            }
+            "visit": [
+                "10",
+                "12",
+                "13",
+                "15",
+                "16",
+                "17"
+            ],
+            "inspection": [
+                "10",
+                "12",
+                "13",
+                "14",
+                "15",
+                "16",
+                "17"
+            ]
         }, {
             "date": "2019-07-18",
-            "visit": {
-                "10": {},
-                "11": {},
-                "12": {},
-                "13": {},
-                "14": {},
-                "15": {},
-                "16": {},
-                "17": {}
-            },
-            "inspection": {
-                "10": {},
-                "11": {},
-                "12": {},
-                "13": {},
-                "14": {},
-                "15": {},
-                "16": {},
-                "17": {}
-            }
+            "visit": [
+                "10",
+                "11",
+                "12",
+                "13",
+                "14",
+                "15",
+                "16",
+                "17"
+            ],
+            "inspection": [
+                "10",
+                "11",
+                "12",
+                "13",
+                "14",
+                "15",
+                "16",
+                "17"
+            ]
         }];
 
         scheduleRepository.buildDB = jest.fn().mockImplementation(() => {
@@ -227,32 +257,26 @@ describe('CarRepository', () => {
         const proceeding = "visit";
         const expectedTimes = [{
             "date": "2019-07-17",
-            "visit": {
-                "10": {},
-                "11": {
-                    "car": 1
-                },
-                "12": {},
-                "13": {},
-                "14": {
-                    "car": 7
-                },
-                "15": {},
-                "16": {},
-                "17": {}
-            }
+            "visit": [
+                "10",
+                "12",
+                "13",
+                "15",
+                "16",
+                "17"
+            ]
         }, {
             "date": "2019-07-18",
-            "visit": {
-                "10": {},
-                "11": {},
-                "12": {},
-                "13": {},
-                "14": {},
-                "15": {},
-                "16": {},
-                "17": {}
-            }
+            "visit": [
+                "10",
+                "11",
+                "12",
+                "13",
+                "14",
+                "15",
+                "16",
+                "17"
+            ]
         }];
 
         scheduleRepository.buildDB = jest.fn().mockImplementation(() => {
@@ -270,30 +294,27 @@ describe('CarRepository', () => {
         const proceeding = "inspection";
         const expectedTimes = [{
             "date": "2019-07-17",
-            "inspection": {
-                "10": {},
-                "11": {
-                    "car": 7
-                },
-                "12": {},
-                "13": {},
-                "14": {},
-                "15": {},
-                "16": {},
-                "17": {}
-            }
+            "inspection": [
+                "10",
+                "12",
+                "13",
+                "14",
+                "15",
+                "16",
+                "17"
+            ]
         }, {
             "date": "2019-07-18",
-            "inspection": {
-                "10": {},
-                "11": {},
-                "12": {},
-                "13": {},
-                "14": {},
-                "15": {},
-                "16": {},
-                "17": {}
-            }
+            "inspection": [
+                "10",
+                "11",
+                "12",
+                "13",
+                "14",
+                "15",
+                "16",
+                "17"
+            ]
         }];
 
         scheduleRepository.buildDB = jest.fn().mockImplementation(() => {

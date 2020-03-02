@@ -71,11 +71,15 @@ export default class ScheduleRepository {
 
             switch (proceeding) {
                 case 'visit':
-                    return {date: date.value, visit: availableTimes.visit};
+                    return {date: date.value, visit: this.findAvailableVisitSchedules(availableTimes.visit)};
                 case 'inspection':
-                    return {date: date.value, inspection: availableTimes.inspection};
+                    return {date: date.value, inspection: this.findAvailableInspectionSchedules(availableTimes.inspection)};
                 default:
-                    return {date: date.value, visit: availableTimes.visit, inspection: availableTimes.inspection};
+                    return {
+                        date: date.value,
+                        visit: this.findAvailableVisitSchedules(availableTimes.visit),
+                        inspection: this.findAvailableInspectionSchedules(availableTimes.inspection)
+                    };
             };
 
         });
@@ -84,6 +88,22 @@ export default class ScheduleRepository {
     findCavScheduleByName = (cavs: Cav[], cavName: string): Cav => {
         return _.find(cavs, (cav: Cav) => cav.name == cavName);
     };
+
+    findAvailableVisitSchedules(visits: any) {
+        return _.reduce(visits, (result: any = [], value: {}, key: string) => {
+            if(_.isEmpty(value)) result.push(key);
+
+            return result;
+        }, []);
+    }
+
+    findAvailableInspectionSchedules(inspections: any) {
+        return _.reduce(inspections, (result: any = [], value: {}, key: string) => {
+            if(_.isEmpty(value)) result.push(key);
+
+            return result;
+        }, []);
+    }
 
     buildDB = () => {
         return JSON.parse(fs.readFileSync('../db/calendar.json', 'utf8'));
