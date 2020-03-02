@@ -316,7 +316,7 @@ describe('CarRepository', () => {
 
         scheduleRepository.parseJsonToSchedule();
 
-        expect(() => scheduleRepository.findAvailableTimes(cavName, proceeding)).toThrowError(new Error('cav not exist'));;
+        expect(() => scheduleRepository.findAvailableTimes(cavName, proceeding)).toThrowError(new Error('cav not exist'));
     });
 
     test('Should parseCavToJson', async () => {
@@ -704,5 +704,286 @@ describe('CarRepository', () => {
         scheduleRepository.parseJsonToSchedule();
 
         expect(scheduleRepository.schedule).toEqual(expectedScheduleJson);
+    });
+
+    test('Should generateProceeding with proceeding visit', async () => {
+        const proceeding: any = mockSchedule.botafogoCavObject().visit;
+        const cavName: string = "Botafogo";
+        const carId: number = 100;
+        const time: string = "12";
+
+        const expectedProceeding = { '10': {},
+            '11': { car: 1 },
+            '12': { car: 100 },
+            '13': {},
+            '14': { car: 7 },
+            '15': {},
+            '16': {},
+            '17': {} };
+
+        scheduleRepository.carRepository.findById = jest.fn().mockImplementation(() => {
+            return {
+                "id": 100,
+                "brand": "GVW",
+                "model": "Up",
+                "cav": "Botafogo"
+            };
+        });
+
+        scheduleRepository.buildDB = jest.fn().mockImplementation(() => {
+            return JSON.parse(fs.readFileSync('./test/mock/db/calendar.json', 'utf8'));
+        });
+
+        scheduleRepository.parseJsonToSchedule();
+        const response = scheduleRepository.generateProceeding(proceeding, cavName, carId, time);
+
+        expect(response).toEqual(expectedProceeding);
+        expect(scheduleRepository.carRepository.findById).toBeCalledTimes(1);
+        expect(scheduleRepository.carRepository.findById).toBeCalledWith(100);
+    });
+
+    test('Should generateProceeding with proceeding inspection', async () => {
+        const proceeding: any = mockSchedule.botafogoCavObject().inspection;
+        const cavName: string = "Botafogo";
+        const carId: number = 100;
+        const time: string = "12";
+
+        const expectedProceeding = {
+            "10": {},
+            "11": {
+                "car": 7
+            },
+            "12": {
+                "car": 100
+            },
+            "13": {},
+            "14": {},
+            "15": {},
+            "16": {},
+            "17": {}
+        };
+
+        scheduleRepository.carRepository.findById = jest.fn().mockImplementation(() => {
+            return {
+                "id": 100,
+                "brand": "GVW",
+                "model": "Up",
+                "cav": "Botafogo"
+            };
+        });
+
+        scheduleRepository.buildDB = jest.fn().mockImplementation(() => {
+            return JSON.parse(fs.readFileSync('./test/mock/db/calendar.json', 'utf8'));
+        });
+
+        scheduleRepository.parseJsonToSchedule();
+        const response = scheduleRepository.generateProceeding(proceeding, cavName, carId, time);
+
+        expect(response).toEqual(expectedProceeding);
+        expect(scheduleRepository.carRepository.findById).toBeCalledTimes(1);
+        expect(scheduleRepository.carRepository.findById).toBeCalledWith(100);
+    });
+
+    test('Should generateProceeding throw error because "time has already been reserved by someone else"', async () => {
+        const proceeding: any = mockSchedule.botafogoCavObject().visit;
+        const cavName: string = "Botafogo";
+        const carId: number = 100;
+        const time: string = "11";
+
+        scheduleRepository.buildDB = jest.fn().mockImplementation(() => {
+            return JSON.parse(fs.readFileSync('./test/mock/db/calendar.json', 'utf8'));
+        });
+
+        scheduleRepository.carRepository.findById = jest.fn().mockImplementation(() => {
+            return undefined;
+        });
+
+        scheduleRepository.parseJsonToSchedule();
+
+        expect(() => scheduleRepository.generateProceeding(proceeding, cavName, carId, time))
+            .toThrowError(new Error('time has already been reserved by someone else'));
+
+        expect(scheduleRepository.carRepository.findById).toBeCalledTimes(0);
+    });
+
+    test('Should generateProceeding throw error because "car not exist"', async () => {
+        const proceeding: any = mockSchedule.botafogoCavObject().visit;
+        const cavName: string = "Botafogo";
+        const carId: number = 100;
+        const time: string = "12";
+
+        scheduleRepository.carRepository.findById = jest.fn().mockImplementation(() => {
+            return undefined;
+        });
+
+        scheduleRepository.buildDB = jest.fn().mockImplementation(() => {
+            return JSON.parse(fs.readFileSync('./test/mock/db/calendar.json', 'utf8'));
+        });
+
+        scheduleRepository.parseJsonToSchedule();
+
+        expect(() => scheduleRepository.generateProceeding(proceeding, cavName, carId, time))
+            .toThrowError(new Error('car not exist'));
+
+        expect(scheduleRepository.carRepository.findById).toBeCalledTimes(1);
+        expect(scheduleRepository.carRepository.findById).toBeCalledWith(100);
+    });
+
+    test('Should generateProceeding throw error because "time isn\'t valid"', async () => {
+        const proceeding: any = mockSchedule.botafogoCavObject().visit;
+        const cavName: string = "Botafogo";
+        const carId: number = 100;
+        const time: string = "120";
+
+        scheduleRepository.carRepository.findById = jest.fn().mockImplementation(() => {
+            return {
+                "id": 100,
+                "brand": "GVW",
+                "model": "Up",
+                "cav": "Botafogo"
+            };
+        });
+
+        scheduleRepository.buildDB = jest.fn().mockImplementation(() => {
+            return JSON.parse(fs.readFileSync('./test/mock/db/calendar.json', 'utf8'));
+        });
+
+        scheduleRepository.parseJsonToSchedule();
+
+        expect(() => scheduleRepository.generateProceeding(proceeding, cavName, carId, time))
+            .toThrowError(new Error("time isn't valid"));
+
+        expect(scheduleRepository.carRepository.findById).toBeCalledTimes(0);
+    });
+
+    test('Should scheduleProceeding with proceeding visit', async () => {
+        const proceeding: any = 'visit';
+        const cavName: string = "Botafogo";
+        const requestDate: string = "2019-07-17";
+        const carId: number = 1;
+        const time: string = "13";
+
+        scheduleRepository.buildDB = jest.fn().mockImplementation(() => {
+            return JSON.parse(fs.readFileSync('./test/mock/db/calendar.json', 'utf8'));
+        });
+
+        scheduleRepository.findDateSchedule = jest.fn().mockImplementation(() => {
+            return mockSchedule.defaultDateScheduleObject();
+        });
+
+        scheduleRepository.findCav = jest.fn().mockImplementation(() => {
+            return mockSchedule.botafogoCavObject();
+        });
+
+        scheduleRepository.generateProceeding = jest.fn().mockImplementation(() => {
+            return mockSchedule.botafogoCavObject().visit
+        });
+
+        scheduleRepository.saveSchedule = jest.fn().mockImplementation(() => {});
+
+        scheduleRepository.parseJsonToSchedule();
+
+        scheduleRepository.scheduleProceeding(cavName, requestDate, time, carId, proceeding);
+
+        expect(scheduleRepository.findDateSchedule).toBeCalledTimes(1);
+        expect(scheduleRepository.findDateSchedule).toBeCalledWith(requestDate);
+
+        expect(scheduleRepository.findCav).toBeCalledTimes(1);
+        expect(scheduleRepository.findCav).toBeCalledWith(mockSchedule.defaultDateScheduleObject(), cavName);
+
+        expect(scheduleRepository.generateProceeding).toBeCalledTimes(1);
+        expect(scheduleRepository.generateProceeding).toBeCalledWith(mockSchedule.botafogoCavObject().visit, cavName, carId, time);
+
+        expect(scheduleRepository.saveSchedule).toBeCalledTimes(1);
+    });
+
+    test('Should scheduleProceeding with proceeding inspection', async () => {
+        const proceeding: any = 'inspection';
+        const cavName: string = "Botafogo";
+        const requestDate: string = "2019-07-17";
+        const carId: number = 1;
+        const time: string = "13";
+
+        scheduleRepository.buildDB = jest.fn().mockImplementation(() => {
+            return JSON.parse(fs.readFileSync('./test/mock/db/calendar.json', 'utf8'));
+        });
+
+        scheduleRepository.findDateSchedule = jest.fn().mockImplementation(() => {
+            return mockSchedule.defaultDateScheduleObject();
+        });
+
+        scheduleRepository.findCav = jest.fn().mockImplementation(() => {
+            return mockSchedule.botafogoCavObject();
+        });
+
+        scheduleRepository.generateProceeding = jest.fn().mockImplementation(() => {
+            return mockSchedule.botafogoCavObject().inspection
+        });
+
+        scheduleRepository.saveSchedule = jest.fn().mockImplementation(() => {});
+
+        scheduleRepository.parseJsonToSchedule();
+
+        scheduleRepository.scheduleProceeding(cavName, requestDate, time, carId, proceeding);
+
+        expect(scheduleRepository.findDateSchedule).toBeCalledTimes(1);
+        expect(scheduleRepository.findDateSchedule).toBeCalledWith(requestDate);
+
+        expect(scheduleRepository.findCav).toBeCalledTimes(1);
+        expect(scheduleRepository.findCav).toBeCalledWith(mockSchedule.defaultDateScheduleObject(), cavName);
+
+        expect(scheduleRepository.generateProceeding).toBeCalledTimes(1);
+        expect(scheduleRepository.generateProceeding).toBeCalledWith(mockSchedule.botafogoCavObject().inspection, cavName, carId, time);
+
+        expect(scheduleRepository.saveSchedule).toBeCalledTimes(1);
+    });
+
+    test('Should scheduleProceeding throw error because "cav isn\'t valid"', async () => {
+        const proceeding: any = 'visit';
+        const cavName: string = "Botafogo";
+        const requestDate: string = "2019-07-17";
+        const carId: number = 1;
+        const time: string = "12";
+
+        scheduleRepository.buildDB = jest.fn().mockImplementation(() => {
+            return JSON.parse(fs.readFileSync('./test/mock/db/calendar.json', 'utf8'));
+        });
+
+        scheduleRepository.findDateSchedule = jest.fn().mockImplementation(() => {
+            return mockSchedule.defaultDateScheduleObject();
+        });
+
+        scheduleRepository.findCav = jest.fn().mockImplementation(() => {
+            return undefined;
+        });
+
+        scheduleRepository.parseJsonToSchedule();
+
+        expect(() => scheduleRepository.scheduleProceeding(cavName, requestDate, time, carId, proceeding))
+            .toThrowError(new Error("cav isn't valid"));
+
+        expect(scheduleRepository.findDateSchedule).toBeCalledTimes(1);
+        expect(scheduleRepository.findDateSchedule).toBeCalledWith(requestDate);
+    });
+
+    test('Should scheduleProceeding throw error because "date isn\'t valid"', async () => {
+        const proceeding: any = 'visit';
+        const cavName: string = "Botafogo";
+        const requestDate: string = "2019-07-17";
+        const carId: number = 1;
+        const time: string = "12";
+
+        scheduleRepository.buildDB = jest.fn().mockImplementation(() => {
+            return JSON.parse(fs.readFileSync('./test/mock/db/calendar.json', 'utf8'));
+        });
+
+        scheduleRepository.findDateSchedule = jest.fn().mockImplementation(() => {
+            return undefined;
+        });
+
+        scheduleRepository.parseJsonToSchedule();
+
+        expect(() => scheduleRepository.scheduleProceeding(cavName, requestDate, time, carId, proceeding))
+            .toThrowError(new Error("date isn't valid"));
     });
 });

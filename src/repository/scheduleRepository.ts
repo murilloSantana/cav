@@ -8,14 +8,13 @@ const _ = require('lodash');
 
 export default class ScheduleRepository {
 
-    private carRepository: CarRepository;
+    carRepository: CarRepository;
     schedule: Schedule;
 
     constructor() {
         this.carRepository = new CarRepository();
     }
 
-    // TODO diminuir a quantidade de params passados
     scheduleProceeding = (cavName: string, requestDate: string, time: string, carId: number, proceeding: string) => {
         this.parseJsonToSchedule();
 
@@ -27,6 +26,10 @@ export default class ScheduleRepository {
 
         findedCavSchedule[proceeding] = this.generateProceeding(findedCavSchedule[proceeding], cavName, carId, time);
 
+        this.saveSchedule();
+    };
+
+    saveSchedule = () => {
         fs.writeFileSync("../db/calendar.json", JSON.stringify(this.parseScheduleToJson(this.schedule)));
     };
 
