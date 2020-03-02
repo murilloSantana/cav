@@ -106,7 +106,7 @@ export default class ScheduleRepository {
     }
 
     buildDB = () => {
-        return JSON.parse(fs.readFileSync('../db/calendar.json', 'utf8'));
+        return JSON.parse(fs.readFileSync('./db/calendar.json', 'utf8'));
     };
 
     parseJsonToSchedule = () => {

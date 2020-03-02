@@ -11,6 +11,6 @@ export default class CarRepository {
     }
 
     buildDB() {
-        return JSON.parse(fs.readFileSync('../db/cars.json', 'utf8'));
+        return JSON.parse(fs.readFileSync('./db/cars.json', 'utf8'));
     }
 }

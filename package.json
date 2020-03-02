@@ -2,7 +2,7 @@
   "name": "cav",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "src/server.js",
   "author": "murillo.costa.ferreira@gmail.com",
   "homepage": "https://github.com/murilloSantana/cav/blob/master/README.md",
   "repository": {
@@ -10,7 +10,10 @@
     "url": "git@github.com:murilloSantana/cav.git"
   },
   "scripts": {
+    "start": "node ./src/server.js",
     "build": "tsc",
+    "build-docker-image": "docker build -t murillo.ferreira/cav:$npm_package_version .",
+    "run-docker-image": "npm run build-docker-image && docker run -it --rm --name cav -p 3000:3000 murillo.ferreira/cav:$npm_package_version",
     "watch": "tsc -w",
     "test": "jest",
     "cdk": "cdk"

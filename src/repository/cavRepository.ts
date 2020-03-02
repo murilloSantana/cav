@@ -15,6 +15,6 @@ export default class CavRepository {
     }
 
     buildDB = () => {
-        return JSON.parse(fs.readFileSync('../db/cav.json', 'utf8'));
+        return JSON.parse(fs.readFileSync('./db/cav.json', 'utf8'));
     }
 }
