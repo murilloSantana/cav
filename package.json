@@ -13,10 +13,9 @@
     "start": "node ./src/server.js",
     "build": "tsc",
     "build-docker-image": "docker build -t murillo.ferreira/cav:$npm_package_version .",
-    "run-docker-image": "npm run build-docker-image && docker run -it --rm --name cav -p 3000:3000 murillo.ferreira/cav:$npm_package_version",
+    "run-docker-container": "npm run build-docker-image && docker run -it --rm --name cav -p 3000:3000 murillo.ferreira/cav:$npm_package_version",
     "watch": "tsc -w",
-    "test": "jest",
-    "cdk": "cdk"
+    "test": "jest"
   },
   "author": "",
   "license": "ISC",
