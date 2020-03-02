@@ -9,7 +9,7 @@ const _ = require('lodash');
 export default class ScheduleRepository {
 
     private carRepository: CarRepository;
-    private schedule: Schedule;
+    schedule: Schedule;
 
     constructor() {
         this.carRepository = new CarRepository();
@@ -17,7 +17,7 @@ export default class ScheduleRepository {
 
     // TODO diminuir a quantidade de params passados
     scheduleProceeding = (cavName: string, requestDate: string, time: string, carId: number, proceeding: string) => {
-        this.schedule = this.parseJsonToSchedule();
+        this.parseJsonToSchedule();
 
         const findedDate = this.findDateSchedule(requestDate);
         if(!findedDate) throw new Error("date isn't valid");
@@ -59,10 +59,12 @@ export default class ScheduleRepository {
     };
 
     findAvailableTimes = (cavName: string, proceeding: string): Array<any>  => {
-        this.schedule = this.parseJsonToSchedule();
+        this.parseJsonToSchedule();
 
         return _.map(this.schedule.dates, (date: DateSchedule) => {
             const availableTimes = this.findCavScheduleByName(date.cavs, cavName);
+
+            if(!availableTimes) throw new Error("cav not exist");
 
             switch (proceeding) {
                 case 'visit':
@@ -80,18 +82,22 @@ export default class ScheduleRepository {
         return _.find(cavs, (cav: Cav) => cav.name == cavName);
     };
 
-    private parseJsonToSchedule = () => {
-        const scheduleJson = JSON.parse(fs.readFileSync('../db/calendar.json', 'utf8'));
+    buildDB = () => {
+        return JSON.parse(fs.readFileSync('../db/calendar.json', 'utf8'));
+    };
+
+    parseJsonToSchedule = () => {
+        const scheduleJson = this.buildDB();
         const dates: DateSchedule[] = [];
         _.toPairs(scheduleJson.date).forEach((item: any) => {
             const cavs = this.parseJsonToCav(item[1].cav);
             dates.push(new DateSchedule(item[0], cavs));
         });
 
-        return new Schedule(dates);
+        this.schedule = new Schedule(dates);
     };
 
-    private parseJsonToCav = (cavMap: any) => {
+    parseJsonToCav = (cavMap: any) => {
         const cavs: Cav[] = [];
         _.toPairs(cavMap).forEach((cavItem: any) => {
             cavs.push(new Cav(cavItem[0], cavItem[1].visit, cavItem[1].inspection));
@@ -100,7 +106,7 @@ export default class ScheduleRepository {
         return cavs;
     };
 
-    private parseScheduleToJson = (schedule: Schedule) => {
+    parseScheduleToJson = (schedule: Schedule) => {
         const scheduleJson: any = {date: {}};
         schedule.dates.forEach((date) => {
             scheduleJson.date[date.value] = {cav: {}};
@@ -112,7 +118,7 @@ export default class ScheduleRepository {
         return scheduleJson;
     };
 
-    private parseCavToJson = (cavList: any) => {
+    parseCavToJson = (cavList: any) => {
         const result = _.reduce(cavList, (result: any = {}, value: any, key: any) => {
             result[value.name] = {visit: value.visit, inspection: value.inspection}
             return result;
